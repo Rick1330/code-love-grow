@@ -10,31 +10,40 @@ interface LanguagesChartProps {
 
 const LanguagesChart = ({ languageData }: LanguagesChartProps) => {
   return (
-    <div className="bg-white rounded-xl shadow-md p-6">
-      <h2 className="text-xl font-bold mb-4">Languages & Tools</h2>
+    <div className="tssk-card">
+      <h2 className="text-lg font-semibold text-slate-800 mb-4">Languages & Tools</h2>
       <div className="h-60">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={languageData}
             margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
+            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+            <XAxis 
+              dataKey="name" 
+              tick={{ fill: '#64748B', fontSize: 12 }}
+              axisLine={{ stroke: '#e2e8f0' }}
+            />
+            <YAxis 
+              tick={{ fill: '#64748B', fontSize: 12 }}
+              axisLine={{ stroke: '#e2e8f0' }}
+            />
             <Tooltip 
               contentStyle={{ 
                 backgroundColor: 'white',
                 borderRadius: '8px',
                 border: 'none',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
               }}
+              itemStyle={{ color: '#38BDF8' }}
             />
             <Area 
               type="monotone" 
               dataKey="hours" 
-              stroke="#D3E4FD" 
-              fill="#D3E4FD" 
+              stroke="#38BDF8" 
+              fill="#BAE6FD" 
               name="Hours"
+              strokeWidth={2}
             />
           </AreaChart>
         </ResponsiveContainer>
