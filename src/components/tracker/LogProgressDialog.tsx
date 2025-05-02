@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +17,10 @@ import { PlusCircle } from "lucide-react";
 
 interface LogProgressDialogProps {
   onSubmit: (data: TrackerEntry) => Promise<boolean>;
+  children?: React.ReactNode; // Add children prop
 }
 
-const LogProgressDialog = ({ onSubmit }: LogProgressDialogProps) => {
+const LogProgressDialog = ({ onSubmit, children }: LogProgressDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<TrackerEntry>({
@@ -81,10 +81,12 @@ const LogProgressDialog = ({ onSubmit }: LogProgressDialogProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-lovable-purple hover:bg-lovable-purple-dark rounded-full">
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Log Today's Progress
-        </Button>
+        {children || (
+          <Button className="bg-lovable-purple hover:bg-lovable-purple-dark rounded-full">
+            <PlusCircle className="w-5 h-5 mr-2" />
+            Log Today's Progress
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
