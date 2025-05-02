@@ -30,7 +30,7 @@ const NewTask = () => {
   };
 
   return (
-    <div className="pl-20 lg:pl-64 pt-16">
+    <div className="pt-4">
       <div className="p-6 md:p-10">
         <h1 className="text-2xl md:text-3xl font-bold mb-8">Create New Task</h1>
         
