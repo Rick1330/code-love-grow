@@ -3,10 +3,23 @@ import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import { Button } from "@/components/ui/button";
 import ProjectCard from "@/components/ui/custom/ProjectCard";
-import { PlusCircle, Search } from "lucide-react";
+import { PlusCircle, Search, Users, Calendar } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 const Projects = () => {
   const [filter, setFilter] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newProject, setNewProject] = useState({
+    title: "",
+    description: "",
+    tags: "",
+    deadline: ""
+  });
+  const { toast } = useToast();
   
   const dummyProjects = [
     {
@@ -15,7 +28,8 @@ const Projects = () => {
       progress: 65,
       tags: ["React", "Tailwind", "Frontend"],
       deadline: "Jun 15",
-      status: "active"
+      status: "active",
+      team: ["John D.", "Sarah M."]
     },
     {
       title: "Recipe App",
@@ -23,7 +37,8 @@ const Projects = () => {
       progress: 30,
       tags: ["React Native", "Firebase", "Mobile"],
       deadline: "Jul 22",
-      status: "active"
+      status: "active",
+      team: ["Emma R."]
     },
     {
       title: "Blog Platform",
@@ -31,7 +46,8 @@ const Projects = () => {
       progress: 85,
       tags: ["Next.js", "MongoDB", "Fullstack"],
       deadline: "May 10",
-      status: "active"
+      status: "active",
+      team: ["John D.", "Mike T.", "Lisa K."]
     },
     {
       title: "Weather Dashboard",
@@ -39,7 +55,8 @@ const Projects = () => {
       progress: 100,
       tags: ["API", "JavaScript", "Frontend"],
       deadline: "",
-      status: "completed"
+      status: "completed",
+      team: ["Sarah M."]
     },
     {
       title: "Task Management API",
@@ -47,7 +64,8 @@ const Projects = () => {
       progress: 50,
       tags: ["Node.js", "Express", "MongoDB"],
       deadline: "",
-      status: "paused"
+      status: "paused",
+      team: ["Mike T.", "John D."]
     },
     {
       title: "E-commerce Site",
@@ -55,13 +73,47 @@ const Projects = () => {
       progress: 15,
       tags: ["React", "Stripe", "Firebase"],
       deadline: "Aug 30",
-      status: "active"
+      status: "active",
+      team: ["Lisa K.", "Emma R.", "Sarah M."]
     }
   ];
   
   const filteredProjects = filter === "all" 
     ? dummyProjects 
     : dummyProjects.filter(project => project.status === filter);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setNewProject(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateProject = () => {
+    // Validation
+    if (!newProject.title.trim()) {
+      toast({
+        title: "Error",
+        description: "Project title is required",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Here you would normally submit to the backend
+    // For now, just show a success toast
+    toast({
+      title: "Success",
+      description: `Project "${newProject.title}" created successfully`,
+    });
+
+    // Reset form and close dialog
+    setNewProject({
+      title: "",
+      description: "",
+      tags: "",
+      deadline: ""
+    });
+    setIsDialogOpen(false);
+  };
 
   return (
     <div className="min-h-screen bg-lovable-gray-light/50">
@@ -81,6 +133,7 @@ const Projects = () => {
               </div>
               <Button 
                 className="bg-lovable-purple hover:bg-lovable-purple-dark rounded-full flex items-center gap-2"
+                onClick={() => setIsDialogOpen(true)}
               >
                 <PlusCircle className="w-5 h-5" />
                 <span>New Project</span>
@@ -141,6 +194,7 @@ const Projects = () => {
                   progress={project.progress}
                   tags={project.tags}
                   deadline={project.deadline}
+                  team={project.team}
                 />
               ))}
             </div>
@@ -154,6 +208,69 @@ const Projects = () => {
           </div>
         </div>
       </div>
+
+      {/* Create Project Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Create New Project</DialogTitle>
+            <DialogDescription>
+              Add a new project to your workspace and start tracking progress.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="title">Project Name *</Label>
+              <Input 
+                id="title" 
+                name="title"
+                value={newProject.title}
+                onChange={handleInputChange}
+                placeholder="Enter project title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea 
+                id="description" 
+                name="description"
+                value={newProject.description}
+                onChange={handleInputChange}
+                placeholder="Describe your project"
+                rows={3}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tags">Tags (comma separated)</Label>
+              <Input 
+                id="tags" 
+                name="tags"
+                value={newProject.tags}
+                onChange={handleInputChange}
+                placeholder="React, API, Frontend"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="deadline">Deadline</Label>
+              <Input 
+                id="deadline" 
+                name="deadline"
+                type="date"
+                value={newProject.deadline}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={handleCreateProject} className="bg-lovable-purple hover:bg-lovable-purple-dark">
+              Create Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

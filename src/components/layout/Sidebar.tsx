@@ -1,92 +1,77 @@
 
-import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Home, LayoutDashboard, Calendar, Award, Cog, ListChecks, FileText, MessageCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+// Import directly from the header
+import React from "react";
+import {
+  Home,
+  BarChart,
+  Folder,
+  Calendar,
+  Settings,
+  Award,
+  LogOut,
+  Check,
+  User,
+  Bell
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import NotificationDropdown from "../notifications/NotificationDropdown";
 
 const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const path = location.pathname;
 
   const navItems = [
-    { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { path: '/projects', label: 'Projects', icon: <FileText className="w-5 h-5" /> },
-    { path: '/tracker', label: 'Time Tracker', icon: <Calendar className="w-5 h-5" /> },
-    { path: '/tasks', label: 'Tasks', icon: <ListChecks className="w-5 h-5" /> },
-    { path: '/achievements', label: 'Achievements', icon: <Award className="w-5 h-5" /> },
-    { path: '/settings', label: 'Settings', icon: <Cog className="w-5 h-5" /> },
+    { href: "/dashboard", icon: Home, text: "Dashboard" },
+    { href: "/projects", icon: Folder, text: "Projects" },
+    { href: "/tasks", icon: Check, text: "Tasks" },
+    { href: "/tracker", icon: BarChart, text: "Tracker" },
+    { href: "/schedule", icon: Calendar, text: "Schedule" },
+    { href: "/achievements", icon: Award, text: "Achievements" },
+    { href: "/settings", icon: Settings, text: "Settings" },
   ];
 
   return (
-    <div 
-      className={cn(
-        "h-screen fixed top-0 left-0 bg-white dark:bg-gray-900 shadow-sm transition-all duration-300 z-40 flex flex-col border-r border-slate-200 dark:border-slate-800",
-        collapsed ? "w-20" : "w-64"
-      )}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-        {!collapsed && (
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-md bg-tssk-teal flex items-center justify-center">
-              <span className="text-white text-lg font-bold">T</span>
-            </div>
-            <span className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-tssk-teal to-tssk-teal-dark">
-              tssk.
-            </span>
-          </Link>
-        )}
-        {collapsed && (
-          <div className="w-8 h-8 rounded-md bg-tssk-teal flex items-center justify-center mx-auto">
-            <span className="text-white text-lg font-bold">T</span>
-          </div>
-        )}
-        <button 
-          onClick={() => setCollapsed(!collapsed)} 
-          className="p-2 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-        </button>
+    <aside className="fixed inset-y-0 left-0 z-50 w-20 lg:w-64 bg-lovable-gray-dark text-white flex flex-col">
+      <div className="p-4 lg:p-6 border-b border-lovable-gray-mid/20">
+        <Link to="/" className="flex items-center">
+          <span className="text-xl font-bold hidden lg:block">tssk-manager</span>
+          <span className="text-xl font-bold lg:hidden">TM</span>
+        </Link>
       </div>
       
-      <nav className="flex-1 p-3 overflow-y-auto">
+      <nav className="flex-1 py-6">
         <ul className="space-y-1">
           {navItems.map((item) => (
-            <li key={item.path}>
-              <Link 
-                to={item.path}
-                className={cn(
-                  "flex items-center gap-3 p-2.5 rounded-lg transition-colors",
-                  location.pathname === item.path 
-                    ? "bg-tssk-teal/10 text-tssk-teal" 
-                    : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
-                )}
+            <li key={item.href}>
+              <Link
+                to={item.href}
+                className={`flex items-center px-4 lg:px-6 py-3 hover:bg-lovable-purple-dark/20 transition-colors ${
+                  path === item.href
+                    ? "bg-lovable-purple-dark/30 text-lovable-purple-light border-r-4 border-lovable-purple"
+                    : ""
+                }`}
               >
-                {item.icon}
-                {!collapsed && <span className="font-medium">{item.label}</span>}
+                <item.icon className="w-6 h-6 lg:mr-3" />
+                <span className="hidden lg:block">{item.text}</span>
               </Link>
             </li>
           ))}
         </ul>
       </nav>
       
-      <div className="p-3 border-t border-slate-200 dark:border-slate-800">
-        <div className={cn(
-          "flex items-center gap-3 p-2 rounded-lg bg-slate-50 dark:bg-slate-800",
-          collapsed ? "justify-center" : ""
-        )}>
-          <div className="h-8 w-8 rounded-full bg-gradient-to-br from-tssk-teal to-tssk-teal-dark flex items-center justify-center">
-            <span className="text-white text-sm font-bold">U</span>
+      <div className="p-4 border-t border-lovable-gray-mid/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <User className="w-6 h-6 lg:mr-3" />
+            <span className="hidden lg:block">John Doe</span>
           </div>
-          {!collapsed && (
-            <div>
-              <p className="text-sm font-medium">Alex Morgan</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Developer</p>
-            </div>
-          )}
+          <div className="flex items-center gap-3">
+            <NotificationDropdown />
+            <LogOut className="w-5 h-5 cursor-pointer" />
+          </div>
         </div>
       </div>
-    </div>
+    </aside>
   );
 };
 

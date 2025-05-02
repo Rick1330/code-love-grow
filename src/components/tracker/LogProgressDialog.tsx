@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,13 @@ import { Label } from "@/components/ui/label";
 import { TrackerEntry } from "@/services/api";
 import { Slider } from "@/components/ui/slider";
 import { PlusCircle } from "lucide-react";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface LogProgressDialogProps {
   onSubmit: (data: TrackerEntry) => Promise<boolean>;
@@ -30,6 +38,16 @@ const LogProgressDialog = ({ onSubmit, children }: LogProgressDialogProps) => {
     notes: "",
     languages: [{ name: "JavaScript", hours: 1 }]
   });
+  
+  // Mock data - would come from API
+  const projects = [
+    { id: "project1", title: "Personal Portfolio" },
+    { id: "project2", title: "Recipe App" },
+    { id: "project3", title: "Blog Platform" },
+    { id: "project4", title: "Weather Dashboard" },
+    { id: "project5", title: "Task Management API" },
+    { id: "project6", title: "E-commerce Site" }
+  ];
   
   const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -96,6 +114,36 @@ const LogProgressDialog = ({ onSubmit, children }: LogProgressDialogProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="date">Date</Label>
+            <Input
+              id="date"
+              type="date"
+              value={formData.date instanceof Date ? formData.date.toISOString().split('T')[0] : formData.date}
+              onChange={e => handleChange('date', e.target.value)}
+              className="col-span-3"
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="project">Project</Label>
+            <Select 
+              value={formData.project || ''} 
+              onValueChange={value => handleChange('project', value)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a project" />
+              </SelectTrigger>
+              <SelectContent>
+                {projects.map(project => (
+                  <SelectItem key={project.id} value={project.id}>
+                    {project.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
           <div className="grid gap-2">
             <Label htmlFor="hours">Total Hours Coded</Label>
             <Input

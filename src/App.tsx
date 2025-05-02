@@ -12,6 +12,7 @@ import Achievements from "./pages/Achievements";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/Tasks";
+import Schedule from "./pages/Schedule";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/projects" element={<Projects />} />
           <Route path="/tracker" element={<Tracker />} />
           <Route path="/tasks" element={<Tasks />} />
+          <Route path="/schedule" element={<Schedule />} />
           <Route path="/achievements" element={<Achievements />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
