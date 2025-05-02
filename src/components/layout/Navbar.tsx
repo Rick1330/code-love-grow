@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Menu, X, Search, Bell, User, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -16,15 +16,16 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-white/80 backdrop-blur-md py-3 px-4 md:px-8 fixed top-0 left-0 right-0 z-50 shadow-sm border-b border-slate-200">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-md bg-tssk-teal flex items-center justify-center">
+          <div className="w-8 h-8 rounded-md bg-lovable-purple flex items-center justify-center">
             <span className="text-white text-lg font-bold">T</span>
           </div>
-          <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-tssk-teal to-tssk-teal-dark">
+          <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-lovable-purple to-lovable-purple-dark">
             Task Manager
           </span>
         </Link>
@@ -42,32 +43,32 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           <Link 
             to="/dashboard" 
-            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
-              location.pathname === '/dashboard' ? 'text-tssk-teal' : ''
+            className={`text-slate-600 hover:text-lovable-purple font-medium transition-colors ${
+              location.pathname === '/dashboard' ? 'text-lovable-purple' : ''
             }`}
           >
             Dashboard
           </Link>
           <Link 
             to="/projects" 
-            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
-              location.pathname === '/projects' ? 'text-tssk-teal' : ''
+            className={`text-slate-600 hover:text-lovable-purple font-medium transition-colors ${
+              location.pathname === '/projects' ? 'text-lovable-purple' : ''
             }`}
           >
             Projects
           </Link>
           <Link 
             to="/tasks" 
-            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
-              location.pathname === '/tasks' ? 'text-tssk-teal' : ''
+            className={`text-slate-600 hover:text-lovable-purple font-medium transition-colors ${
+              location.pathname === '/tasks' ? 'text-lovable-purple' : ''
             }`}
           >
             Tasks
           </Link>
           <Link 
             to="/tracker" 
-            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
-              location.pathname === '/tracker' ? 'text-tssk-teal' : ''
+            className={`text-slate-600 hover:text-lovable-purple font-medium transition-colors ${
+              location.pathname === '/tracker' ? 'text-lovable-purple' : ''
             }`}
           >
             Tracker
@@ -84,17 +85,17 @@ const Navbar = () => {
                 <User className="w-5 h-5" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-white">
+            <DropdownMenuContent align="end" className="w-56 bg-white z-50">
               <div className="p-2 text-center">
                 <p className="font-medium">John Doe</p>
                 <p className="text-xs text-slate-500">john.doe@example.com</p>
               </div>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/profile" className="cursor-pointer">Profile</Link>
+              <DropdownMenuItem onClick={() => navigate('/profile')} className="cursor-pointer">
+                Profile
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/settings" className="cursor-pointer">Settings</Link>
+              <DropdownMenuItem onClick={() => navigate('/settings')} className="cursor-pointer">
+                Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="text-red-500 cursor-pointer">
@@ -105,16 +106,16 @@ const Navbar = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size="sm" className="bg-tssk-teal hover:bg-tssk-teal-dark rounded-lg">
+              <Button size="sm" className="bg-lovable-purple hover:bg-lovable-purple-dark rounded-lg">
                 <Plus className="w-4 h-4 mr-1" /> New Task
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 bg-white">
-              <DropdownMenuItem asChild>
-                <Link to="/tasks/new" className="cursor-pointer">New Task</Link>
+            <DropdownMenuContent align="end" className="w-56 bg-white z-50">
+              <DropdownMenuItem onClick={() => navigate('/tasks/new')} className="cursor-pointer">
+                New Task
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/projects/new" className="cursor-pointer">New Project</Link>
+              <DropdownMenuItem onClick={() => navigate('/projects/new')} className="cursor-pointer">
+                New Project
               </DropdownMenuItem>
               <DropdownMenuItem>
                 Quick Time Entry
@@ -135,7 +136,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 flex flex-col gap-4 border-b border-slate-200 animate-fade-in">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-white shadow-md py-4 px-6 flex flex-col gap-4 border-b border-slate-200 animate-fade-in z-40">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 text-slate-400 w-4 h-4" />
             <Input 
@@ -146,8 +147,8 @@ const Navbar = () => {
           
           <Link 
             to="/dashboard" 
-            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
-              location.pathname === '/dashboard' ? 'text-tssk-teal' : 'text-slate-700'
+            className={`font-medium hover:text-lovable-purple transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/dashboard' ? 'text-lovable-purple' : 'text-slate-700'
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
@@ -155,8 +156,8 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/projects" 
-            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
-              location.pathname === '/projects' ? 'text-tssk-teal' : 'text-slate-700'
+            className={`font-medium hover:text-lovable-purple transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/projects' ? 'text-lovable-purple' : 'text-slate-700'
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
@@ -164,8 +165,8 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/tasks" 
-            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
-              location.pathname === '/tasks' ? 'text-tssk-teal' : 'text-slate-700'
+            className={`font-medium hover:text-lovable-purple transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/tasks' ? 'text-lovable-purple' : 'text-slate-700'
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
@@ -173,8 +174,8 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/tracker" 
-            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
-              location.pathname === '/tracker' ? 'text-tssk-teal' : 'text-slate-700'
+            className={`font-medium hover:text-lovable-purple transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/tracker' ? 'text-lovable-purple' : 'text-slate-700'
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
@@ -182,8 +183,8 @@ const Navbar = () => {
           </Link>
           <Link 
             to="/settings" 
-            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
-              location.pathname === '/settings' ? 'text-tssk-teal' : 'text-slate-700'
+            className={`font-medium hover:text-lovable-purple transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/settings' ? 'text-lovable-purple' : 'text-slate-700'
             }`}
             onClick={() => setIsMenuOpen(false)}
           >
@@ -191,10 +192,20 @@ const Navbar = () => {
           </Link>
           
           <div className="flex justify-between pt-3">
-            <Button variant="outline" size="sm" className="rounded-lg w-[48%] border-slate-200">
+            <Button variant="outline" size="sm" className="rounded-lg w-[48%] border-slate-200"
+              onClick={() => {
+                navigate('/profile');
+                setIsMenuOpen(false);
+              }}
+            >
               Profile
             </Button>
-            <Button className="bg-tssk-teal hover:bg-tssk-teal-dark rounded-lg w-[48%]">
+            <Button className="bg-lovable-purple hover:bg-lovable-purple-dark rounded-lg w-[48%]"
+              onClick={() => {
+                navigate('/tasks/new');
+                setIsMenuOpen(false);
+              }}
+            >
               New Task
             </Button>
           </div>
