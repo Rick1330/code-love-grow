@@ -118,7 +118,7 @@ const Projects = () => {
   return (
     <div className="min-h-screen bg-lovable-gray-light/50">
       <Sidebar />
-      <div className="pl-20 lg:pl-64 pt-6">
+      <div className="pl-20 lg:pl-64 pt-16">
         <div className="p-6 md:p-10">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4">
             <h1 className="text-2xl md:text-3xl font-bold">Your Projects</h1>

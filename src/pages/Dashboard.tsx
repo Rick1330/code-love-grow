@@ -33,7 +33,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-lovable-gray-light/50">
       <Sidebar />
-      <div className="pl-20 lg:pl-64 pt-6">
+      <div className="pl-20 lg:pl-64 pt-16">
         <div className="p-6 md:p-10">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl md:text-3xl font-bold">Welcome, Developer! 👋</h1>

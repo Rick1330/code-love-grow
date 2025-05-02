@@ -1,12 +1,21 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Menu, X, Search, Bell, User } from "lucide-react";
+import { Menu, X, Search, Bell, User, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import NotificationDropdown from "../notifications/NotificationDropdown";
+import { 
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
   return (
     <nav className="bg-white/80 backdrop-blur-md py-3 px-4 md:px-8 fixed top-0 left-0 right-0 z-50 shadow-sm border-b border-slate-200">
@@ -16,7 +25,7 @@ const Navbar = () => {
             <span className="text-white text-lg font-bold">T</span>
           </div>
           <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-tssk-teal to-tssk-teal-dark">
-            tssk.
+            Task Manager
           </span>
         </Link>
 
@@ -31,28 +40,87 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          <Link to="/dashboard" className="text-slate-600 hover:text-tssk-teal font-medium transition-colors">
+          <Link 
+            to="/dashboard" 
+            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
+              location.pathname === '/dashboard' ? 'text-tssk-teal' : ''
+            }`}
+          >
             Dashboard
           </Link>
-          <Link to="/projects" className="text-slate-600 hover:text-tssk-teal font-medium transition-colors">
+          <Link 
+            to="/projects" 
+            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
+              location.pathname === '/projects' ? 'text-tssk-teal' : ''
+            }`}
+          >
             Projects
           </Link>
-          <Link to="/tracker" className="text-slate-600 hover:text-tssk-teal font-medium transition-colors">
+          <Link 
+            to="/tasks" 
+            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
+              location.pathname === '/tasks' ? 'text-tssk-teal' : ''
+            }`}
+          >
+            Tasks
+          </Link>
+          <Link 
+            to="/tracker" 
+            className={`text-slate-600 hover:text-tssk-teal font-medium transition-colors ${
+              location.pathname === '/tracker' ? 'text-tssk-teal' : ''
+            }`}
+          >
             Tracker
           </Link>
         </div>
 
         {/* Desktop Auth Buttons */}
         <div className="hidden md:flex items-center gap-3">
-          <button className="p-2 rounded-full hover:bg-slate-100 text-slate-600">
-            <Bell className="w-5 h-5" />
-          </button>
-          <button className="p-2 rounded-full hover:bg-slate-100 text-slate-600">
-            <User className="w-5 h-5" />
-          </button>
-          <Button size="sm" className="bg-tssk-teal hover:bg-tssk-teal-dark rounded-lg">
-            New Task
-          </Button>
+          <NotificationDropdown />
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-2 rounded-full hover:bg-slate-100 text-slate-600">
+                <User className="w-5 h-5" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-white">
+              <div className="p-2 text-center">
+                <p className="font-medium">John Doe</p>
+                <p className="text-xs text-slate-500">john.doe@example.com</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link to="/profile" className="cursor-pointer">Profile</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/settings" className="cursor-pointer">Settings</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="text-red-500 cursor-pointer">
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" className="bg-tssk-teal hover:bg-tssk-teal-dark rounded-lg">
+                <Plus className="w-4 h-4 mr-1" /> New Task
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56 bg-white">
+              <DropdownMenuItem asChild>
+                <Link to="/tasks/new" className="cursor-pointer">New Task</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/projects/new" className="cursor-pointer">New Project</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                Quick Time Entry
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Mobile Menu Button */}
@@ -78,28 +146,45 @@ const Navbar = () => {
           
           <Link 
             to="/dashboard" 
-            className="font-medium text-slate-700 hover:text-tssk-teal transition-colors py-2 border-b border-slate-100"
+            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/dashboard' ? 'text-tssk-teal' : 'text-slate-700'
+            }`}
             onClick={() => setIsMenuOpen(false)}
           >
             Dashboard
           </Link>
           <Link 
             to="/projects" 
-            className="font-medium text-slate-700 hover:text-tssk-teal transition-colors py-2 border-b border-slate-100"
+            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/projects' ? 'text-tssk-teal' : 'text-slate-700'
+            }`}
             onClick={() => setIsMenuOpen(false)}
           >
             Projects
           </Link>
           <Link 
+            to="/tasks" 
+            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/tasks' ? 'text-tssk-teal' : 'text-slate-700'
+            }`}
+            onClick={() => setIsMenuOpen(false)}
+          >
+            Tasks
+          </Link>
+          <Link 
             to="/tracker" 
-            className="font-medium text-slate-700 hover:text-tssk-teal transition-colors py-2 border-b border-slate-100"
+            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/tracker' ? 'text-tssk-teal' : 'text-slate-700'
+            }`}
             onClick={() => setIsMenuOpen(false)}
           >
             Time Tracker
           </Link>
           <Link 
             to="/settings" 
-            className="font-medium text-slate-700 hover:text-tssk-teal transition-colors py-2 border-b border-slate-100"
+            className={`font-medium hover:text-tssk-teal transition-colors py-2 border-b border-slate-100 ${
+              location.pathname === '/settings' ? 'text-tssk-teal' : 'text-slate-700'
+            }`}
             onClick={() => setIsMenuOpen(false)}
           >
             Settings
@@ -107,7 +192,7 @@ const Navbar = () => {
           
           <div className="flex justify-between pt-3">
             <Button variant="outline" size="sm" className="rounded-lg w-[48%] border-slate-200">
-              Sign In
+              Profile
             </Button>
             <Button className="bg-tssk-teal hover:bg-tssk-teal-dark rounded-lg w-[48%]">
               New Task

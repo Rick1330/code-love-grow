@@ -1,5 +1,4 @@
 
-// Import directly from the header
 import React from "react";
 import {
   Home,
@@ -34,7 +33,7 @@ const Sidebar = () => {
     <aside className="fixed inset-y-0 left-0 z-50 w-20 lg:w-64 bg-lovable-gray-dark text-white flex flex-col">
       <div className="p-4 lg:p-6 border-b border-lovable-gray-mid/20">
         <Link to="/" className="flex items-center">
-          <span className="text-xl font-bold hidden lg:block">tssk-manager</span>
+          <span className="text-xl font-bold hidden lg:block">Task Manager</span>
           <span className="text-xl font-bold lg:hidden">TM</span>
         </Link>
       </div>
