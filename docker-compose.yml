@@ -1,0 +1,62 @@
+
+version: '3'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: task-manager-mongodb
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - task-manager-network
+    restart: unless-stopped
+
+  # Backend service
+  backend:
+    build: ./backend
+    container_name: task-manager-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    environment:
+      - PORT=5000
+      - NODE_ENV=development
+      - MONGO_URI=mongodb://mongodb:27017/task-manager
+      - JWT_SECRET=docker_development_secret
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - task-manager-network
+    restart: unless-stopped
+
+  # Frontend service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: task-manager-frontend
+    ports:
+      - "8080:8080"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - task-manager-network
+    restart: unless-stopped
+
+networks:
+  task-manager-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
