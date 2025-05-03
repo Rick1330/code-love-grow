@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { Eye, EyeOff } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -29,6 +30,7 @@ type FormData = z.infer<typeof formSchema>;
 export function LoginForm() {
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -44,6 +46,8 @@ export function LoginForm() {
     setIsLoading(false);
   };
 
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -52,9 +56,13 @@ export function LoginForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-gray-700">Email</FormLabel>
               <FormControl>
-                <Input placeholder="email@example.com" {...field} />
+                <Input 
+                  placeholder="email@example.com" 
+                  className="h-12 text-base border-gray-300 focus:border-lovable-purple focus:ring-2 focus:ring-lovable-purple/20" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -65,9 +73,27 @@ export function LoginForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel className="text-gray-700">Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••" {...field} />
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••"
+                    className="h-12 text-base border-gray-300 focus:border-lovable-purple focus:ring-2 focus:ring-lovable-purple/20 pr-10"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={togglePasswordVisibility}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-lovable-purple"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,10 +101,17 @@ export function LoginForm() {
         />
         <Button 
           type="submit" 
-          className="w-full bg-lovable-purple hover:bg-lovable-purple/90"
+          className="w-full h-12 text-base font-medium bg-lovable-purple hover:bg-lovable-purple/90 transition-colors duration-300 shadow-md hover:shadow-lg"
           disabled={isLoading}
         >
-          {isLoading ? "Logging in..." : "Login"}
+          {isLoading ? (
+            <>
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent"></div>
+              Logging in...
+            </>
+          ) : (
+            "Sign In"
+          )}
         </Button>
       </form>
     </Form>
