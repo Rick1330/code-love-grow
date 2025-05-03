@@ -1,73 +1,96 @@
-# Welcome to your Lovable project
 
-## Project info
+# Task Manager - Full Stack Application
 
-**URL**: https://lovable.dev/projects/af6e4e12-02af-4234-9431-c0e227903a95
+A comprehensive task management application built with React, TypeScript, and Node.js.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- User authentication (signup, login, logout)
+- Project management
+- Task tracking
+- Time tracking
+- Achievement system
+- Settings and profile management
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/af6e4e12-02af-4234-9431-c0e227903a95) and start prompting.
+### Frontend
+- React with TypeScript
+- React Router for navigation
+- TanStack Query for data fetching
+- Tailwind CSS for styling
+- Shadcn UI components
+- Axios for API requests
 
-Changes made via Lovable will be committed automatically to this repo.
+### Backend
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- JWT for authentication
 
-**Use your preferred IDE**
+## Getting Started
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (v16 or higher)
+- MongoDB (installed locally or a MongoDB Atlas account)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Setup Instructions
 
-Follow these steps:
+#### Backend Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Create a MongoDB database (locally or on MongoDB Atlas)
+2. Navigate to the backend folder:
+   ```
+   cd backend
+   ```
+3. Copy the .env.example file to .env:
+   ```
+   cp .env.example .env
+   ```
+4. Edit the .env file with your MongoDB connection string and JWT secret
+5. Install dependencies:
+   ```
+   npm install
+   ```
+6. Start the backend server:
+   ```
+   npm start
+   ```
+   The server should start on port 5000.
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+#### Frontend Setup
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. In a separate terminal, navigate to the project root
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Start the frontend:
+   ```
+   npm run dev
+   ```
+   The app should be available at http://localhost:5173
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## API Documentation
 
-**Edit a file directly in GitHub**
+The API documentation can be found in the BACKEND_API_DOCS.md file.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Development Notes
 
-**Use GitHub Codespaces**
+- The frontend makes API calls to the backend using Axios
+- Authentication is managed using JWT tokens stored in localStorage
+- Protected routes redirect unauthenticated users to the login page
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deploying to Production
 
-## What technologies are used for this project?
+### Backend
+1. Set up your production MongoDB database
+2. Configure environment variables for production
+3. Deploy the backend to your hosting service (Heroku, Digital Ocean, AWS, etc.)
 
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/af6e4e12-02af-4234-9431-c0e227903a95) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Frontend
+1. Build the frontend:
+   ```
+   npm run build
+   ```
+2. Deploy the build folder to your hosting service

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // This should be updated to your actual backend URL when deployed
 export const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://api.tssk-manager.com/api' 
+  ? 'https://api.task-manager.com/api' 
   : 'http://localhost:5000/api';
 
 const api = axios.create({
@@ -33,7 +33,8 @@ api.interceptors.response.use(
     // Handle token expiration
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
-      // You could redirect to login here
+      // Redirect to login page
+      window.location.href = '/';
     }
     
     return Promise.reject(error);

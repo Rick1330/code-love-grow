@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
 import Navbar from "./components/layout/Navbar";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -29,32 +30,140 @@ const queryClient = new QueryClient({
   },
 });
 
+// Protected route component
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const { isAuthenticated, loading } = useAuth();
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-lovable-purple"></div>
+      </div>
+    );
+  }
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner position="top-right" />
-      <BrowserRouter>
-        <div className="min-h-screen bg-lovable-gray-light/50">
-          <Navbar />
-          <div className="pt-16">
+      <AuthProvider>
+        <Toaster />
+        <Sonner position="top-right" />
+        <BrowserRouter>
+          <div className="min-h-screen bg-lovable-gray-light/50">
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/projects" element={<Projects />} />
-              <Route path="/tracker" element={<Tracker />} />
-              <Route path="/tasks" element={<Tasks />} />
-              <Route path="/schedule" element={<Schedule />} />
-              <Route path="/achievements" element={<Achievements />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/tasks/new" element={<NewTask />} />
-              <Route path="/projects/new" element={<NewProject />} />
+              <Route path="/dashboard" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Dashboard />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/projects" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Projects />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/tracker" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Tracker />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/tasks" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Tasks />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/schedule" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Schedule />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/achievements" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Achievements />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Settings />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <Profile />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/tasks/new" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <NewTask />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
+              <Route path="/projects/new" element={
+                <ProtectedRoute>
+                  <>
+                    <Navbar />
+                    <div className="pt-16">
+                      <NewProject />
+                    </div>
+                  </>
+                </ProtectedRoute>
+              } />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </div>
-      </BrowserRouter>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
