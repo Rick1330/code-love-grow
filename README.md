@@ -11,6 +11,7 @@ A comprehensive task management application built with React, TypeScript, and No
 - Time tracking
 - Achievement system
 - Settings and profile management
+- Role-based access control
 
 ## Tech Stack
 
@@ -27,14 +28,47 @@ A comprehensive task management application built with React, TypeScript, and No
 - Express.js
 - MongoDB with Mongoose
 - JWT for authentication
+- Jest for testing
 
 ## Getting Started
 
 ### Prerequisites
 - Node.js (v16 or higher)
 - MongoDB (installed locally or a MongoDB Atlas account)
+- Bun (optional but recommended for improved performance)
 
-### Setup Instructions
+### Using Bun Runtime
+
+This project supports Bun as an alternative to Node.js for faster performance.
+
+#### Installing Bun
+```bash
+# For macOS, Linux, and WSL
+curl -fsSL https://bun.sh/install | bash
+
+# For Windows (via npm)
+npm install -g bun
+```
+
+#### Running the Project with Bun
+```bash
+# Install dependencies
+bun install
+
+# Run frontend
+bun run dev
+
+# Run backend
+cd backend
+bun run dev
+```
+
+#### Common Bun Issues
+- **Compatibility**: Some Node.js packages may not be fully compatible with Bun
+- **Windows Support**: Bun has limited Windows support; WSL is recommended
+- **Extensions**: Some VS Code extensions may not work with Bun
+
+### Standard Setup (Node.js)
 
 #### Backend Setup
 
@@ -71,26 +105,40 @@ A comprehensive task management application built with React, TypeScript, and No
    ```
    The app should be available at http://localhost:5173
 
+## Testing
+
+### Backend Tests
+```bash
+cd backend
+npm test
+```
+
+### Frontend Tests
+```bash
+npm test
+```
+
+## Directory Structure
+
+```
+/
+├── src/               # Frontend code
+├── backend/           # Backend code
+│   ├── controllers/   # Business logic
+│   ├── middleware/    # Express middleware
+│   ├── models/        # Mongoose models
+│   ├── routes/        # API routes
+│   ├── tests/         # Test files
+│   └── server.js      # Main server file
+├── docs/              # Documentation
+└── README.md          # Project overview
+```
+
 ## API Documentation
 
 The API documentation can be found in the BACKEND_API_DOCS.md file.
 
-## Development Notes
+## Deployment
 
-- The frontend makes API calls to the backend using Axios
-- Authentication is managed using JWT tokens stored in localStorage
-- Protected routes redirect unauthenticated users to the login page
+For deployment instructions, please refer to the docs/deployment-guide.md file.
 
-## Deploying to Production
-
-### Backend
-1. Set up your production MongoDB database
-2. Configure environment variables for production
-3. Deploy the backend to your hosting service (Heroku, Digital Ocean, AWS, etc.)
-
-### Frontend
-1. Build the frontend:
-   ```
-   npm run build
-   ```
-2. Deploy the build folder to your hosting service

@@ -20,6 +20,15 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  role: {
+    type: String,
+    enum: ['user', 'admin', 'manager'],
+    default: 'user'
+  },
+  permissions: {
+    type: [String],
+    default: []
+  },
   settings: {
     theme: {
       type: String,

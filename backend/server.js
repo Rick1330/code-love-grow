@@ -4,6 +4,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const path = require('path');
+const { errorHandler } = require('./middleware/errorHandler');
 require('dotenv').config();
 
 // Initialize express app
@@ -37,22 +38,15 @@ app.use('/api/achievements', require('./routes/achievements'));
 // Handle production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
-  app.use(express.static('client/build'));
+  app.use(express.static(path.join(__dirname, '../dist')));
 
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
   });
 }
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({ 
-    message: err.message || 'Server Error',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined 
-  });
-});
+// Global error handling middleware - must be after all routes
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
