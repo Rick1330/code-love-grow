@@ -101,7 +101,7 @@ export function LoginForm() {
         />
         <Button 
           type="submit" 
-          className="w-full h-12 text-base font-medium bg-lovable-purple hover:bg-lovable-purple/90 transition-colors duration-300 shadow-md hover:shadow-lg"
+          className="w-full h-12 text-base font-medium bg-lovable-purple hover:bg-lovable-purple/90 text-black transition-colors duration-300 shadow-md hover:shadow-lg"
           disabled={isLoading}
         >
           {isLoading ? (
