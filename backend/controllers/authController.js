@@ -83,6 +83,10 @@ const loginUser = async (req, res, next) => {
       throw new ApiError('Invalid Credentials', 400);
     }
 
+    // Update last login time
+    user.lastLogin = new Date();
+    await user.save();
+
     // Return jsonwebtoken
     const payload = {
       user: {
@@ -204,37 +208,8 @@ const googleAuthCallback = async (req, res, next) => {
       }
     );
   } catch (err) {
+    console.error('Google auth error:', err);
     next(new ApiError('Google authentication failed', 401, { originalError: err.message }));
-  }
-};
-
-/**
- * @desc    Process Apple authentication
- * @route   POST /api/auth/apple
- * @access  Public
- */
-const appleAuthCallback = async (req, res, next) => {
-  try {
-    // Apple auth implementation would go here
-    // For now, we'll return a not implemented error
-    next(new ApiError('Apple authentication not implemented yet', 501));
-  } catch (err) {
-    next(new ApiError('Apple authentication failed', 401, { originalError: err.message }));
-  }
-};
-
-/**
- * @desc    Process Microsoft authentication
- * @route   POST /api/auth/microsoft
- * @access  Public
- */
-const microsoftAuthCallback = async (req, res, next) => {
-  try {
-    // Microsoft auth implementation would go here
-    // For now, we'll return a not implemented error
-    next(new ApiError('Microsoft authentication not implemented yet', 501));
-  } catch (err) {
-    next(new ApiError('Microsoft authentication failed', 401, { originalError: err.message }));
   }
 };
 
@@ -243,7 +218,5 @@ module.exports = {
   loginUser,
   getCurrentUser,
   logoutUser,
-  googleAuthCallback,
-  appleAuthCallback,
-  microsoftAuthCallback
+  googleAuthCallback
 };

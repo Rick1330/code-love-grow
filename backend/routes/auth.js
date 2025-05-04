@@ -4,14 +4,13 @@ const router = express.Router();
 const { check } = require('express-validator');
 const auth = require('../middleware/auth');
 const validateRequest = require('../middleware/validateRequest');
+const { loginRateLimiter } = require('../middleware/auth');
 const { 
   registerUser,
   loginUser, 
   getCurrentUser,
   logoutUser,
-  googleAuthCallback,
-  appleAuthCallback,
-  microsoftAuthCallback
+  googleAuthCallback
 } = require('../controllers/authController');
 
 // @route   POST api/auth/register
@@ -29,7 +28,7 @@ router.post('/register', [
 router.post('/login', [
   check('email', 'Please include a valid email').isEmail(),
   check('password', 'Password is required').exists()
-], validateRequest, loginUser);
+], loginRateLimiter, validateRequest, loginUser);
 
 // @route   GET api/auth/me
 // @desc    Get current user
@@ -48,19 +47,5 @@ router.post('/logout', auth, logoutUser);
 router.post('/google', [
   check('token', 'Google token is required').exists()
 ], validateRequest, googleAuthCallback);
-
-// @route   POST api/auth/apple
-// @desc    Authenticate with Apple
-// @access  Public
-router.post('/apple', [
-  check('token', 'Apple token is required').exists()
-], validateRequest, appleAuthCallback);
-
-// @route   POST api/auth/microsoft
-// @desc    Authenticate with Microsoft
-// @access  Public
-router.post('/microsoft', [
-  check('token', 'Microsoft token is required').exists()
-], validateRequest, microsoftAuthCallback);
 
 module.exports = router;

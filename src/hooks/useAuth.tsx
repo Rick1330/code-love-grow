@@ -12,8 +12,6 @@ interface AuthContextType {
   logout: () => void;
   checkAuth: () => Promise<void>;
   googleLogin: (token: string) => Promise<boolean>;
-  appleLogin: (token: string) => Promise<boolean>;
-  microsoftLogin: (token: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -87,50 +85,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const appleLogin = async (token: string) => {
-    try {
-      const res = await authAPI.appleLogin({ token });
-      localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
-      setIsAuthenticated(true);
-      toast({
-        title: "Success!",
-        description: "Logged in with Apple successfully",
-      });
-      return true;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Apple login failed. Please try again.';
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
-  const microsoftLogin = async (token: string) => {
-    try {
-      const res = await authAPI.microsoftLogin({ token });
-      localStorage.setItem('token', res.data.token);
-      setUser(res.data.user);
-      setIsAuthenticated(true);
-      toast({
-        title: "Success!",
-        description: "Logged in with Microsoft successfully",
-      });
-      return true;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Microsoft login failed. Please try again.';
-      toast({
-        title: "Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
-      return false;
-    }
-  };
-
   const register = async (name: string, email: string, password: string) => {
     try {
       const res = await authAPI.register({ name, email, password });
@@ -180,9 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         register,
         logout,
         checkAuth,
-        googleLogin,
-        appleLogin,
-        microsoftLogin
+        googleLogin
       }}
     >
       {children}

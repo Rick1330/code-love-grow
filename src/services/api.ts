@@ -8,9 +8,7 @@ export const authAPI = {
   login: (credentials: LoginData) => api.post('/auth/login', credentials),
   getMe: () => api.get('/auth/me'),
   logout: () => api.post('/auth/logout'),
-  googleLogin: (tokenData: SocialLoginData) => api.post('/auth/google', tokenData),
-  appleLogin: (tokenData: SocialLoginData) => api.post('/auth/apple', tokenData),
-  microsoftLogin: (tokenData: SocialLoginData) => api.post('/auth/microsoft', tokenData)
+  googleLogin: (tokenData: SocialLoginData) => api.post('/auth/google', tokenData)
 };
 
 // Projects API

@@ -16,7 +16,8 @@ jest.mock('../models/User', () => {
     findOne: jest.fn(),
     findById: jest.fn(),
     prototype: {
-      save: jest.fn()
+      save: jest.fn(),
+      comparePassword: jest.fn()
     }
   };
 });
@@ -35,6 +36,23 @@ jest.mock('jsonwebtoken', () => ({
   }),
   verify: jest.fn()
 }));
+
+// Mocking google-auth-library
+jest.mock('google-auth-library', () => {
+  return {
+    OAuth2Client: jest.fn().mockImplementation(() => {
+      return {
+        verifyIdToken: jest.fn().mockResolvedValue({
+          getPayload: jest.fn().mockReturnValue({
+            email: 'googleuser@example.com',
+            name: 'Google User',
+            sub: 'google-12345'
+          })
+        })
+      };
+    })
+  };
+});
 
 describe('Authentication API', () => {
   beforeAll(() => {
@@ -106,7 +124,8 @@ describe('Authentication API', () => {
         id: testUserId,
         name: 'Test User',
         email: 'test@example.com',
-        comparePassword: () => Promise.resolve(true)
+        comparePassword: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue({})
       });
 
       bcrypt.compare.mockResolvedValue(true);
@@ -128,7 +147,7 @@ describe('Authentication API', () => {
       User.findOne.mockResolvedValue({
         id: testUserId,
         email: 'test@example.com',
-        comparePassword: () => Promise.resolve(false)
+        comparePassword: jest.fn().mockResolvedValue(false)
       });
 
       bcrypt.compare.mockResolvedValue(false);
@@ -142,6 +161,52 @@ describe('Authentication API', () => {
 
       expect(res.statusCode).toBe(400);
       expect(res.body).toHaveProperty('message', 'Invalid Credentials');
+    });
+  });
+
+  describe('POST /api/auth/google', () => {
+    it('should authenticate with Google and return token for new user', async () => {
+      // Setup mocks
+      User.findOne.mockResolvedValue(null);
+      User.prototype.save.mockImplementation(function() {
+        this.id = testUserId;
+        this.name = 'Google User';
+        this.email = 'googleuser@example.com';
+        this.authProvider = 'google';
+        this.authProviderId = 'google-12345';
+        return Promise.resolve(this);
+      });
+
+      const res = await request(server)
+        .post('/api/auth/google')
+        .send({ token: 'valid-google-token' });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('user');
+      expect(res.body.user).toHaveProperty('id');
+      expect(res.body.user).toHaveProperty('name');
+      expect(res.body.user).toHaveProperty('email');
+    });
+
+    it('should authenticate with Google and return token for existing user', async () => {
+      // Setup mocks for existing user
+      User.findOne.mockResolvedValue({
+        id: testUserId,
+        name: 'Google User',
+        email: 'googleuser@example.com',
+        authProvider: 'google',
+        authProviderId: 'google-12345',
+        save: jest.fn().mockResolvedValue({})
+      });
+
+      const res = await request(server)
+        .post('/api/auth/google')
+        .send({ token: 'valid-google-token' });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('token');
+      expect(res.body).toHaveProperty('user');
     });
   });
 });

@@ -7,6 +7,10 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuth } from "@/hooks/useAuth";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+// Use a valid Google Client ID for the GoogleOAuthProvider
+// In production, this should be set in an environment variable
+const googleClientId = process.env.GOOGLE_CLIENT_ID || '175906877181-ehm95gk139u4hntjccovm4gkqatsejif.apps.googleusercontent.com';
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("login");
   const { isAuthenticated, loading } = useAuth();
@@ -33,7 +37,7 @@ const Index = () => {
   }
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+    <GoogleOAuthProvider clientId={googleClientId}>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
