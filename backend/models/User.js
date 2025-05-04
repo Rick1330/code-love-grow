@@ -2,68 +2,79 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true
-  },
-  password: {
-    type: String,
-    required: true
-  },
-  avatar: {
-    type: String,
-    default: ''
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin', 'manager'],
-    default: 'user'
-  },
-  permissions: {
-    type: [String],
-    default: []
-  },
-  settings: {
-    theme: {
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
       type: String,
-      enum: ['light', 'dark'],
-      default: 'light'
+      required: true
     },
-    emailNotifications: {
-      type: Boolean,
-      default: true
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true
     },
-    pushNotifications: {
+    password: {
+      type: String,
+      required: true,
+      minlength: 6
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user'
+    },
+    avatar: {
+      type: String
+    },
+    authProvider: {
+      type: String,
+      enum: ['local', 'google', 'apple', 'microsoft'],
+      default: 'local'
+    },
+    authProviderId: {
+      type: String
+    },
+    settings: {
+      theme: {
+        type: String,
+        enum: ['light', 'dark'],
+        default: 'light'
+      },
+      emailNotifications: {
+        type: Boolean,
+        default: true
+      },
+      pushNotifications: {
+        type: Boolean,
+        default: true
+      }
+    },
+    lastLogin: {
+      type: Date
+    },
+    active: {
       type: Boolean,
       default: true
     }
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  {
+    timestamps: true
   }
-});
+);
 
 // Hash password before saving
 UserSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+  if (!this.isModified('password')) {
     next();
-  } catch (error) {
-    next(error);
   }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
-// Method to compare password
+// Compare entered password with hashed password in DB
 UserSchema.methods.comparePassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };

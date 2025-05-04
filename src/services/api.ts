@@ -7,7 +7,10 @@ export const authAPI = {
   register: (userData: RegisterData) => api.post('/auth/register', userData),
   login: (credentials: LoginData) => api.post('/auth/login', credentials),
   getMe: () => api.get('/auth/me'),
-  logout: () => api.post('/auth/logout')
+  logout: () => api.post('/auth/logout'),
+  googleLogin: (tokenData: SocialLoginData) => api.post('/auth/google', tokenData),
+  appleLogin: (tokenData: SocialLoginData) => api.post('/auth/apple', tokenData),
+  microsoftLogin: (tokenData: SocialLoginData) => api.post('/auth/microsoft', tokenData)
 };
 
 // Projects API
@@ -57,6 +60,10 @@ export interface RegisterData {
 export interface LoginData {
   email: string;
   password: string;
+}
+
+export interface SocialLoginData {
+  token: string;
 }
 
 export interface ProfileUpdate {

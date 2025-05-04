@@ -11,6 +11,9 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
   checkAuth: () => Promise<void>;
+  googleLogin: (token: string) => Promise<boolean>;
+  appleLogin: (token: string) => Promise<boolean>;
+  microsoftLogin: (token: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -53,6 +56,72 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return true;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const googleLogin = async (token: string) => {
+    try {
+      const res = await authAPI.googleLogin({ token });
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+      toast({
+        title: "Success!",
+        description: "Logged in with Google successfully",
+      });
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Google login failed. Please try again.';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const appleLogin = async (token: string) => {
+    try {
+      const res = await authAPI.appleLogin({ token });
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+      toast({
+        title: "Success!",
+        description: "Logged in with Apple successfully",
+      });
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Apple login failed. Please try again.';
+      toast({
+        title: "Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const microsoftLogin = async (token: string) => {
+    try {
+      const res = await authAPI.microsoftLogin({ token });
+      localStorage.setItem('token', res.data.token);
+      setUser(res.data.user);
+      setIsAuthenticated(true);
+      toast({
+        title: "Success!",
+        description: "Logged in with Microsoft successfully",
+      });
+      return true;
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Microsoft login failed. Please try again.';
       toast({
         title: "Error",
         description: errorMessage,
@@ -110,7 +179,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         register,
         logout,
-        checkAuth
+        checkAuth,
+        googleLogin,
+        appleLogin,
+        microsoftLogin
       }}
     >
       {children}

@@ -1,9 +1,10 @@
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const { ApiError } = require('../middleware/errorHandler');
+const { OAuth2Client } = require('google-auth-library');
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 /**
  * @desc    Register a new user
@@ -12,11 +13,6 @@ const { ApiError } = require('../middleware/errorHandler');
  */
 const registerUser = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { name, email, password } = req.body;
 
     // Check if user exists
@@ -37,7 +33,8 @@ const registerUser = async (req, res, next) => {
     // Return jsonwebtoken
     const payload = {
       user: {
-        id: user.id
+        id: user.id,
+        role: user.role || 'user'
       }
     };
 
@@ -70,11 +67,6 @@ const registerUser = async (req, res, next) => {
  */
 const loginUser = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
     const { email, password } = req.body;
 
     // Check if user exists
@@ -147,9 +139,111 @@ const logoutUser = async (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
+/**
+ * @desc    Process Google authentication
+ * @route   POST /api/auth/google
+ * @access  Public
+ */
+const googleAuthCallback = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    
+    // Verify Google token
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID
+    });
+    
+    const payload = ticket.getPayload();
+    const email = payload.email;
+    
+    // Find or create user
+    let user = await User.findOne({ email });
+    
+    if (!user) {
+      // Create new user
+      user = new User({
+        name: payload.name,
+        email: payload.email,
+        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
+        authProvider: 'google',
+        authProviderId: payload.sub
+      });
+      
+      await user.save();
+    } else if (!user.authProviderId) {
+      // Update existing user with provider info
+      user.authProvider = 'google';
+      user.authProviderId = payload.sub;
+      await user.save();
+    }
+    
+    // Generate JWT
+    const jwtPayload = {
+      user: {
+        id: user.id,
+        role: user.role || 'user'
+      }
+    };
+    
+    jwt.sign(
+      jwtPayload,
+      process.env.JWT_SECRET,
+      { expiresIn: '7 days' },
+      (err, token) => {
+        if (err) throw err;
+        res.json({ 
+          token,
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role || 'user'
+          }
+        });
+      }
+    );
+  } catch (err) {
+    next(new ApiError('Google authentication failed', 401, { originalError: err.message }));
+  }
+};
+
+/**
+ * @desc    Process Apple authentication
+ * @route   POST /api/auth/apple
+ * @access  Public
+ */
+const appleAuthCallback = async (req, res, next) => {
+  try {
+    // Apple auth implementation would go here
+    // For now, we'll return a not implemented error
+    next(new ApiError('Apple authentication not implemented yet', 501));
+  } catch (err) {
+    next(new ApiError('Apple authentication failed', 401, { originalError: err.message }));
+  }
+};
+
+/**
+ * @desc    Process Microsoft authentication
+ * @route   POST /api/auth/microsoft
+ * @access  Public
+ */
+const microsoftAuthCallback = async (req, res, next) => {
+  try {
+    // Microsoft auth implementation would go here
+    // For now, we'll return a not implemented error
+    next(new ApiError('Microsoft authentication not implemented yet', 501));
+  } catch (err) {
+    next(new ApiError('Microsoft authentication failed', 401, { originalError: err.message }));
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getCurrentUser,
-  logoutUser
+  logoutUser,
+  googleAuthCallback,
+  appleAuthCallback,
+  microsoftAuthCallback
 };
