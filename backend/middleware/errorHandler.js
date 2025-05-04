@@ -14,8 +14,15 @@ const errorHandler = (err, req, res, next) => {
   const errorResponse = {
     success: false,
     message,
+    errors: err.errors || null,
+    // Only include stack trace in development mode
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
   };
+
+  // Don't leak error details in production for 500 errors
+  if (statusCode === 500 && process.env.NODE_ENV === 'production') {
+    errorResponse.message = 'Internal Server Error';
+  }
 
   // Send the error response
   res.status(statusCode).json(errorResponse);
@@ -23,10 +30,11 @@ const errorHandler = (err, req, res, next) => {
 
 // Custom error class for API errors
 class ApiError extends Error {
-  constructor(message, statusCode) {
+  constructor(message, statusCode, additionalInfo = {}) {
     super(message);
     this.statusCode = statusCode;
     this.name = this.constructor.name;
+    this.errors = additionalInfo.errors || null;
     Error.captureStackTrace(this, this.constructor);
   }
 }

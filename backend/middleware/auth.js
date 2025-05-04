@@ -3,6 +3,58 @@ const jwt = require('jsonwebtoken');
 const { ApiError } = require('./errorHandler');
 require('dotenv').config();
 
+// Simple in-memory rate limiter for login attempts
+const loginAttempts = new Map();
+const MAX_ATTEMPTS = 5;
+const WINDOW_MS = 15 * 60 * 1000; // 15 minutes
+
+/**
+ * Rate limiting middleware for login endpoints
+ */
+const loginRateLimiter = (req, res, next) => {
+  const ip = req.ip || req.connection.remoteAddress;
+  const email = req.body.email?.toLowerCase();
+  
+  if (!email) {
+    return next(new ApiError('Email is required', 400));
+  }
+  
+  const key = `${ip}:${email}`;
+  const now = Date.now();
+  const attempts = loginAttempts.get(key) || { count: 0, resetAt: now + WINDOW_MS };
+  
+  // Reset counter if window expired
+  if (attempts.resetAt < now) {
+    attempts.count = 0;
+    attempts.resetAt = now + WINDOW_MS;
+  }
+  
+  // Check if too many attempts
+  if (attempts.count >= MAX_ATTEMPTS) {
+    const timeLeft = Math.ceil((attempts.resetAt - now) / 1000 / 60);
+    return next(new ApiError(
+      `Too many login attempts. Please try again in ${timeLeft} minutes.`,
+      429
+    ));
+  }
+  
+  // Increment counter
+  attempts.count += 1;
+  loginAttempts.set(key, attempts);
+  
+  // Clean up old entries periodically
+  if (loginAttempts.size > 10000) {
+    const now = Date.now();
+    for (const [mapKey, value] of loginAttempts.entries()) {
+      if (value.resetAt < now) {
+        loginAttempts.delete(mapKey);
+      }
+    }
+  }
+  
+  next();
+};
+
 /**
  * Authentication middleware
  */
@@ -62,4 +114,4 @@ const authorize = (roles = []) => {
   };
 };
 
-module.exports = { auth, authorize };
+module.exports = { auth, authorize, loginRateLimiter };
