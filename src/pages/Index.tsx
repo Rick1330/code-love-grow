@@ -1,14 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuth } from "@/hooks/useAuth";
-import { GoogleOAuthProvider } from '@react-oauth/google';
-
-// Use environment variable for Google Client ID
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -19,7 +14,7 @@ const Index = () => {
     setMounted(true);
     
     // Log the Google client ID for debugging
-    console.log("Google Client ID:", googleClientId);
+    console.log("Google Client ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
   }, []);
 
   if (!mounted) {
@@ -38,10 +33,9 @@ const Index = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
-  // Ensure we have a Google Client ID before rendering
+  // Check for Google Client ID
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   if (!googleClientId) {
-    console.error("Google Client ID is missing. Please set VITE_GOOGLE_CLIENT_ID environment variable.");
-    
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
         <div className="p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-white max-w-md">
@@ -56,22 +50,21 @@ const Index = () => {
   }
 
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          {/* Background gradients */}
-          <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-pulse-gentle"></div>
-          <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-3xl animate-pulse-gentle delay-700"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-tssk-teal/5 rounded-full blur-3xl animate-pulse-gentle delay-1000"></div>
-          
-          {/* Grid pattern overlay */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzAgMzBoMzB2MzBIMzB6TjAgMGgzMHYzMEgweiIgZmlsbD0iI2ZmZmZmZjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Background gradients */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-3xl animate-pulse-gentle"></div>
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-3xl animate-pulse-gentle delay-700"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-tssk-teal/5 rounded-full blur-3xl animate-pulse-gentle delay-1000"></div>
+        
+        {/* Grid pattern overlay */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0wIDBoNjB2NjBIMHoiLz48cGF0aCBkPSJNMzAgMzBoMzB2MzBIMzB6TjAgMGgzMHYzMEgweiIgZmlsbD0iI2ZmZmZmZjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+      </div>
 
-        <div className="md:grid md:grid-cols-2 max-w-6xl w-full z-10">
-          <div className="hidden md:flex flex-col items-center justify-center p-10 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-l-2xl relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-tssk-teal/20 to-purple-600/20"></div>
+      <div className="md:grid md:grid-cols-2 max-w-6xl w-full z-10">
+        <div className="hidden md:flex flex-col items-center justify-center p-10 bg-white/5 backdrop-blur-md border border-white/10 text-white rounded-l-2xl relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-tssk-teal/20 to-purple-600/20"></div>
             
             <div className="absolute inset-0">
               <div className="absolute top-10 left-10 w-20 h-20 border border-white/20 rounded-lg"></div>
@@ -132,60 +125,59 @@ const Index = () => {
                 </div>
               </div>
             </div>
-          </div>
+        </div>
 
-          <div className="p-6 md:p-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl md:rounded-l-none md:rounded-r-2xl relative overflow-hidden">
-            <div className="mb-8 relative z-10">
-              <h2 className="text-2xl font-bold text-white">Welcome</h2>
-              <p className="text-slate-400">Please enter your details</p>
-            </div>
-            
-            <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="relative z-10">
-              <TabsList className="grid grid-cols-2 mb-8 bg-white/10">
-                <TabsTrigger 
-                  value="login" 
-                  className="data-[state=active]:bg-tssk-teal data-[state=active]:text-black"
-                >
-                  Login
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="register"
-                  className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
-                >
-                  Register
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="login">
-                <LoginForm />
-                <p className="text-center mt-6 text-sm text-slate-400">
-                  Don't have an account?{" "}
-                  <button 
-                    onClick={() => setActiveTab("register")}
-                    className="text-tssk-teal font-medium hover:text-tssk-teal-light hover:underline transition-colors"
-                  >
-                    Create an account
-                  </button>
-                </p>
-              </TabsContent>
-              
-              <TabsContent value="register">
-                <RegisterForm />
-                <p className="text-center mt-6 text-sm text-slate-400">
-                  Already have an account?{" "}
-                  <button
-                    onClick={() => setActiveTab("login")}
-                    className="text-purple-500 font-medium hover:text-purple-400 hover:underline transition-colors"
-                  >
-                    Sign in
-                  </button>
-                </p>
-              </TabsContent>
-            </Tabs>
+        <div className="p-6 md:p-10 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl md:rounded-l-none md:rounded-r-2xl relative overflow-hidden">
+          <div className="mb-8 relative z-10">
+            <h2 className="text-2xl font-bold text-white">Welcome</h2>
+            <p className="text-slate-400">Please enter your details</p>
           </div>
+          
+          <Tabs defaultValue="login" value={activeTab} onValueChange={setActiveTab} className="relative z-10">
+            <TabsList className="grid grid-cols-2 mb-8 bg-white/10">
+              <TabsTrigger 
+                value="login" 
+                className="data-[state=active]:bg-tssk-teal data-[state=active]:text-black"
+              >
+                Login
+              </TabsTrigger>
+              <TabsTrigger 
+                value="register"
+                className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              >
+                Register
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login">
+              <LoginForm />
+              <p className="text-center mt-6 text-sm text-slate-400">
+                Don't have an account?{" "}
+                <button 
+                  onClick={() => setActiveTab("register")}
+                  className="text-tssk-teal font-medium hover:text-tssk-teal-light hover:underline transition-colors"
+                >
+                  Create an account
+                </button>
+              </p>
+            </TabsContent>
+            
+            <TabsContent value="register">
+              <RegisterForm />
+              <p className="text-center mt-6 text-sm text-slate-400">
+                Already have an account?{" "}
+                <button
+                  onClick={() => setActiveTab("login")}
+                  className="text-purple-500 font-medium hover:text-purple-400 hover:underline transition-colors"
+                >
+                  Sign in
+                </button>
+              </p>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
-    </GoogleOAuthProvider>
+    </div>
   );
 };
 
