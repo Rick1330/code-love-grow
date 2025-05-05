@@ -9,7 +9,8 @@ const {
   registerUser,
   loginUser, 
   getCurrentUser,
-  logoutUser
+  logoutUser,
+  forgotPassword
 } = require('../controllers/authController');
 
 const {
@@ -42,6 +43,13 @@ router.get('/me', auth, getCurrentUser);
 // @desc    Logout user / clear credentials
 // @access  Private
 router.post('/logout', auth, logoutUser);
+
+// @route   POST api/auth/forgot-password
+// @desc    Send password reset email
+// @access  Public
+router.post('/forgot-password', [
+  check('email', 'Please include a valid email').isEmail()
+], validateRequest, forgotPassword);
 
 // Social login routes
 // @route   POST api/auth/google

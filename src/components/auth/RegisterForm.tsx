@@ -19,8 +19,11 @@ import { GoogleLogin } from '@react-oauth/google';
 
 const formSchema = z
   .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
+    firstName: z.string().min(2, {
+      message: "First name must be at least 2 characters.",
+    }),
+    fatherName: z.string().min(2, {
+      message: "Father's name must be at least 2 characters.",
     }),
     email: z.string().email({
       message: "Please enter a valid email address.",
@@ -46,7 +49,8 @@ export function RegisterForm() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firstName: "Elshaday",
+      fatherName: "Mengesha",
       email: "",
       password: "",
       confirmPassword: "",
@@ -55,7 +59,9 @@ export function RegisterForm() {
 
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
-    await register(data.name, data.email, data.password);
+    // Combine first name and father name to create the full name
+    const fullName = `${data.firstName} ${data.fatherName}`;
+    await register(fullName, data.email, data.password);
     setIsLoading(false);
   };
 
@@ -87,23 +93,43 @@ export function RegisterForm() {
               <p className="text-sm text-slate-500 dark:text-slate-400">Create your account to get started</p>
             </div>
             
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-slate-700 dark:text-slate-300">Full Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="John Doe"
-                      className="h-12 text-base bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-200 dark:border-slate-700 focus:border-tssk-teal focus:ring-2 focus:ring-tssk-teal/20"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-700 dark:text-slate-300">First Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Elshaday"
+                        className="h-12 text-base bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-200 dark:border-slate-700 focus:border-tssk-teal focus:ring-2 focus:ring-tssk-teal/20"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={form.control}
+                name="fatherName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-700 dark:text-slate-300">Father's Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Mengesha"
+                        className="h-12 text-base bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm border-slate-200 dark:border-slate-700 focus:border-tssk-teal focus:ring-2 focus:ring-tssk-teal/20"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}

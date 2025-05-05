@@ -141,9 +141,48 @@ const logoutUser = async (req, res) => {
   res.json({ message: 'Logged out successfully' });
 };
 
+/**
+ * @desc    Send password reset email
+ * @route   POST /api/auth/forgot-password
+ * @access  Public
+ */
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    
+    // Check if user exists
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      // For security reasons, still return a success even if user doesn't exist
+      return res.json({ message: 'If your email is registered, you will receive a password reset link' });
+    }
+    
+    // In a real application, you would generate a reset token and send an email
+    // For this example, we'll just return a success message
+    
+    // Example of generating a reset token (not saved to DB in this example)
+    const resetToken = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+    
+    // In a real app, you would send an email with a link containing the token
+    // For now, just log it
+    console.log('Password reset token generated:', resetToken);
+    console.log('This would be sent to:', email);
+    
+    res.json({ message: 'If your email is registered, you will receive a password reset link' });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getCurrentUser,
-  logoutUser
+  logoutUser,
+  forgotPassword
 };

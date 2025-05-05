@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { GoogleLogin } from '@react-oauth/google';
+import { ForgotPasswordForm } from "./ForgotPasswordForm";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -32,6 +33,7 @@ export function LoginForm() {
   const { login, googleLogin } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -62,7 +64,9 @@ export function LoginForm() {
     console.error("Google login failed");
   };
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  if (showForgotPassword) {
+    return <ForgotPasswordForm onBack={() => setShowForgotPassword(false)} />;
+  }
 
   return (
     <div className="relative z-10">
@@ -111,7 +115,7 @@ export function LoginForm() {
                       />
                       <button
                         type="button"
-                        onClick={togglePasswordVisibility}
+                        onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                       >
                         {showPassword ? (
@@ -125,7 +129,8 @@ export function LoginForm() {
                   <div className="flex justify-end">
                     <button 
                       type="button" 
-                      className="text-xs text-tssk-teal hover:text-tssk-teal-dark mt-1"
+                      className="text-xs text-tssk-teal hover:text-tssk-teal-dark mt-1 hover:underline transition-all"
+                      onClick={() => setShowForgotPassword(true)}
                     >
                       Forgot password?
                     </button>
@@ -137,7 +142,7 @@ export function LoginForm() {
             
             <Button 
               type="submit" 
-              className="w-full h-12 text-base font-medium bg-gradient-to-r from-tssk-teal to-purple-500 hover:from-tssk-teal-dark hover:to-purple-600 text-black dark:text-white transition-all duration-300 shadow-lg hover:shadow-tssk-teal/20 hover:scale-[1.01]"
+              className="w-full h-12 text-base font-medium bg-gradient-to-r from-tssk-teal to-purple-500 hover:from-tssk-teal-dark hover:to-purple-600 text-white transition-all duration-300 shadow-lg hover:shadow-tssk-teal/20 hover:scale-[1.01]"
               disabled={isLoading}
             >
               {isLoading ? (
