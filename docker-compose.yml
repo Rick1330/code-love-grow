@@ -27,6 +27,7 @@ services:
       - NODE_ENV=development
       - MONGO_URI=mongodb://mongodb:27017/task-manager
       - JWT_SECRET=docker_development_secret
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -44,6 +45,7 @@ services:
       - "8080:8080"
     environment:
       - VITE_API_URL=http://localhost:5000/api
+      - VITE_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
     volumes:
       - ./:/app
       - /app/node_modules

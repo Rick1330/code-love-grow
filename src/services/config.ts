@@ -1,10 +1,11 @@
 
 import axios from 'axios';
 
-// This should be updated to your actual backend URL when deployed
-export const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://api.task-manager.com/api' 
-  : 'http://localhost:5000/api';
+// Use environment variable for API URL
+export const API_URL = import.meta.env.VITE_API_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://api.task-manager.com/api' 
+    : 'http://localhost:5000/api');
 
 const api = axios.create({
   baseURL: API_URL,

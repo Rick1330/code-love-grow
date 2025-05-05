@@ -46,17 +46,29 @@ If you prefer using a local MongoDB installation:
      ```
      cp .env.example .env
      ```
-   - Edit the `.env` file with your MongoDB connection string and other configuration values:
+   - Edit the `.env` file with your MongoDB connection string, JWT secret, and Google Client ID:
      ```
      PORT=5000
      MONGO_URI=your_mongodb_connection_string
      JWT_SECRET=your_secure_jwt_secret_string
      NODE_ENV=development
+     GOOGLE_CLIENT_ID=your_google_client_id
      ```
 
 2. Frontend Environment Setup:
-   - The frontend uses the environment variable `VITE_API_URL` to connect to the backend API.
-   - This is automatically set in the Docker Compose file, but if you're running without Docker, you'll need to set it manually.
+   - Create a `.env` file in the root directory:
+     ```
+     VITE_API_URL=http://localhost:5000/api
+     VITE_GOOGLE_CLIENT_ID=your_google_client_id
+     ```
+
+3. Getting Google Client ID:
+   - Go to the [Google Developer Console](https://console.developers.google.com/)
+   - Create a new project or select an existing one
+   - Go to "Credentials" and click "Create credentials" > "OAuth client ID"
+   - Set the application type to "Web application"
+   - Add authorized JavaScript origins (e.g., http://localhost:8080) and redirect URIs
+   - Copy the Client ID and paste it in your .env files
 
 ## Running the Application
 
@@ -90,17 +102,22 @@ If you prefer using a local MongoDB installation:
 
 1. Make sure Docker and Docker Compose are installed on your system.
 
-2. From the root directory of the project, run:
+2. Make sure your environment variables are set in your .env files or export them:
+   ```
+   export GOOGLE_CLIENT_ID=your_google_client_id
+   ```
+
+3. From the root directory of the project, run:
    ```
    docker-compose up -d
    ```
 
-3. This will start three containers:
+4. This will start three containers:
    - MongoDB database
    - Backend API server
    - Frontend development server
 
-4. Access the application at http://localhost:8080
+5. Access the application at http://localhost:8080
 
 ## Verifying the Setup
 
@@ -125,6 +142,10 @@ If you prefer using a local MongoDB installation:
    - Verify the `VITE_API_URL` environment variable is correctly set.
    - Check if the backend server is running and accessible.
 
-4. **Docker issues**:
+4. **Google authentication issues**:
+   - Ensure your Google Client ID is correctly set in both backend and frontend .env files.
+   - Verify that your Google OAuth credentials have the correct authorized origins and redirect URIs.
+
+5. **Docker issues**:
    - Ensure Docker and Docker Compose are properly installed.
    - Check Docker logs using `docker-compose logs`.

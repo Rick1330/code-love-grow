@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,9 +6,8 @@ import { RegisterForm } from "@/components/auth/RegisterForm";
 import { useAuth } from "@/hooks/useAuth";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// Use a valid Google Client ID for the GoogleOAuthProvider
-// In production, this should be set in an environment variable
-const googleClientId = process.env.GOOGLE_CLIENT_ID || '175906877181-ehm95gk139u4hntjccovm4gkqatsejif.apps.googleusercontent.com';
+// Use environment variable for Google Client ID
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -37,7 +35,7 @@ const Index = () => {
   }
 
   return (
-    <GoogleOAuthProvider clientId={googleClientId}>
+    <GoogleOAuthProvider clientId={googleClientId || ''}>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
