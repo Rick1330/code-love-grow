@@ -21,6 +21,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -31,16 +32,26 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
+    // Log detailed error information for debugging
+    console.error('API Error:', error);
+    
+    if (error.response) {
+      console.error('Status:', error.response.status);
+      console.error('Data:', error.response.data);
+    }
+    
     // Handle 401 errors (Unauthorized)
     if (error.response && error.response.status === 401) {
       // Redirect to login page or clear local storage
       localStorage.removeItem('token');
       window.location.href = '/'; // Redirect to login
     }
+    
     return Promise.reject(error);
   }
 );
 
+// Type definitions
 export interface Project {
   _id?: string;
   title: string;
@@ -70,8 +81,8 @@ export interface TrackerEntry {
   hours: number;
   mood: number;
   languages: { name: string; hours: number }[];
-  project?: string;  // Add project field
-  notes?: string;    // Add notes field
+  project?: string;  // Project field
+  notes?: string;    // Notes field
 }
 
 export interface TrackerStats {
@@ -125,8 +136,10 @@ export const authAPI = {
   getMe: () => 
     axiosInstance.get('/api/auth/me'),
   
-  googleLogin: (data: { token: string }) => 
-    axiosInstance.post('/api/auth/google', data),
+  googleLogin: (data: { token: string }) => {
+    console.log('Sending Google token to backend:', data.token.substring(0, 20) + '...');
+    return axiosInstance.post('/api/auth/google', data);
+  },
   
   forgotPassword: (data: { email: string }) =>
     axiosInstance.post('/api/auth/forgot-password', data),

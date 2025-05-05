@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Use environment variable for Google Client ID
-const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("login");
@@ -16,6 +17,9 @@ const Index = () => {
   
   useEffect(() => {
     setMounted(true);
+    
+    // Log the Google client ID for debugging
+    console.log("Google Client ID:", googleClientId);
   }, []);
 
   if (!mounted) {
@@ -34,8 +38,25 @@ const Index = () => {
     return <Navigate to="/dashboard" replace />;
   }
 
+  // Ensure we have a Google Client ID before rendering
+  if (!googleClientId) {
+    console.error("Google Client ID is missing. Please set VITE_GOOGLE_CLIENT_ID environment variable.");
+    
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="p-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl text-white max-w-md">
+          <h2 className="text-xl font-bold mb-4">Configuration Error</h2>
+          <p>The application is missing the Google Client ID configuration.</p>
+          <p className="mt-4 text-sm text-slate-400">
+            Please check your environment variables and ensure VITE_GOOGLE_CLIENT_ID is properly set.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <GoogleOAuthProvider clientId={googleClientId || ''}>
+    <GoogleOAuthProvider clientId={googleClientId}>
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">

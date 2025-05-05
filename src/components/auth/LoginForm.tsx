@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { GoogleLogin } from '@react-oauth/google';
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
@@ -31,7 +32,9 @@ type FormData = z.infer<typeof formSchema>;
 
 export function LoginForm() {
   const { login, googleLogin } = useAuth();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
@@ -44,24 +47,56 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: FormData) => {
-    setIsLoading(true);
-    await login(data.email, data.password);
-    setIsLoading(false);
+    try {
+      setIsLoading(true);
+      const success = await login(data.email, data.password);
+      if (!success) {
+        // Error message is handled by the login function
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     try {
       console.log("Google login success:", credentialResponse);
+      setIsGoogleLoading(true);
+      
       if (credentialResponse.credential) {
-        await googleLogin(credentialResponse.credential);
+        const success = await googleLogin(credentialResponse.credential);
+        if (!success) {
+          // Error message is handled by the googleLogin function
+        }
+      } else {
+        throw new Error("No credential received from Google");
       }
     } catch (error) {
       console.error("Google login error:", error);
+      toast({
+        title: "Google Login Failed",
+        description: "Unable to authenticate with Google. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
   const handleGoogleError = () => {
     console.error("Google login failed");
+    toast({
+      title: "Google Login Failed",
+      description: "Authentication with Google was cancelled or failed.",
+      variant: "destructive",
+    });
   };
 
   if (showForgotPassword) {
@@ -165,15 +200,21 @@ export function LoginForm() {
             </div>
             
             <div className="flex justify-center">
-              <GoogleLogin
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                theme="outline"
-                size="large"
-                useOneTap
-                text="signin_with"
-                shape="rectangular"
-              />
+              {isGoogleLoading ? (
+                <div className="h-12 w-full flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-t-transparent border-tssk-teal"></div>
+                </div>
+              ) : (
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  size="large"
+                  useOneTap
+                  text="signin_with"
+                  shape="rectangular"
+                />
+              )}
             </div>
           </form>
         </Form>

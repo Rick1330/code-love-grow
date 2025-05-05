@@ -15,6 +15,13 @@ const googleAuthCallback = async (req, res, next) => {
   try {
     const { token } = req.body;
     
+    if (!token) {
+      throw new ApiError('Google token is required', 400);
+    }
+    
+    // Log for debugging
+    console.log('Processing Google authentication with token');
+    
     // Verify Google token
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
@@ -22,28 +29,45 @@ const googleAuthCallback = async (req, res, next) => {
     });
     
     const payload = ticket.getPayload();
-    const email = payload.email;
+    console.log('Google verification payload received for:', payload.email);
+    
+    const { email, name, sub: googleId, picture } = payload;
     
     // Find or create user
     let user = await User.findOne({ email });
     
     if (!user) {
+      console.log('Creating new user for Google authentication:', email);
+      // Create random password for Google users - they will never use this
+      const randomPassword = Math.random().toString(36).slice(-12);
+      
       // Create new user
       user = new User({
-        name: payload.name,
-        email: payload.email,
-        password: await bcrypt.hash(Math.random().toString(36).slice(-8), 10),
+        name,
+        email,
+        password: await bcrypt.hash(randomPassword, 10),
         authProvider: 'google',
-        authProviderId: payload.sub
+        authProviderId: googleId,
+        avatar: picture
       });
       
       await user.save();
-    } else if (!user.authProviderId) {
-      // Update existing user with provider info
-      user.authProvider = 'google';
-      user.authProviderId = payload.sub;
-      await user.save();
+    } else {
+      console.log('Updating existing user with Google credentials:', email);
+      // Update existing user with Google info if not already set
+      if (!user.authProviderId || user.authProvider !== 'google') {
+        user.authProvider = 'google';
+        user.authProviderId = googleId;
+        if (picture && !user.avatar) {
+          user.avatar = picture;
+        }
+        await user.save();
+      }
     }
+    
+    // Update last login time
+    user.lastLogin = new Date();
+    await user.save();
     
     // Generate JWT
     const jwtPayload = {
@@ -58,14 +82,20 @@ const googleAuthCallback = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: '7 days' },
       (err, token) => {
-        if (err) throw err;
+        if (err) {
+          console.error('JWT Sign Error:', err);
+          throw err;
+        }
+        
+        console.log('Google authentication successful for:', email);
         res.json({ 
           token,
           user: {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role || 'user'
+            role: user.role || 'user',
+            avatar: user.avatar
           }
         });
       }
