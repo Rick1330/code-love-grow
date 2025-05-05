@@ -43,7 +43,8 @@ export function ForgotPasswordForm({ onBack }: ForgotPasswordFormProps) {
   const onSubmit = async (data: FormData) => {
     try {
       setIsLoading(true);
-      await authAPI.forgotPassword(data);
+      // Ensure we're passing a non-optional email string
+      await authAPI.forgotPassword({ email: data.email });
       
       toast({
         title: "Password Reset Email Sent",

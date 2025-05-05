@@ -1,3 +1,4 @@
+
 import axios from 'axios';
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
@@ -69,6 +70,8 @@ export interface TrackerEntry {
   hours: number;
   mood: number;
   languages: { name: string; hours: number }[];
+  project?: string;  // Add project field
+  notes?: string;    // Add notes field
 }
 
 export interface TrackerStats {
