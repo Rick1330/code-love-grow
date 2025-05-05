@@ -9,9 +9,12 @@ const {
   registerUser,
   loginUser, 
   getCurrentUser,
-  logoutUser,
-  googleAuthCallback
+  logoutUser
 } = require('../controllers/authController');
+
+const {
+  googleAuthCallback
+} = require('../controllers/socialAuthController');
 
 // @route   POST api/auth/register
 // @desc    Register user
